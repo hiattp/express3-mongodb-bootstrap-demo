@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
 exports.list = function(req, res){
   User.find(function(err,users){
     if(err) next(err);
-    res.render('index',{
+    res.render('all_users',{
       users:users
     });
   });

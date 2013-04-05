@@ -6,9 +6,13 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , engine = require('ejs-locals');
 
 var app = express();
+
+// use ejs-locals for all ejs templates:
+app.engine('ejs', engine);
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -30,7 +34,7 @@ if ('development' == app.get('env')) {
 
 // Database connection
 if ('development' == app.get('env')) {
-  mongoose.connect(app.set('mongodb://localhost/bubblepop'));
+  mongoose.connect('mongodb://localhost/bubblepop');
 } else {
   // insert db connection for production
 }
@@ -39,6 +43,10 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/users/create', user.create);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+  });
 });
