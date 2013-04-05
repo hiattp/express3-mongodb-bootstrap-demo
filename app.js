@@ -1,20 +1,18 @@
-// Module Dependencies
+// Module Dependencies and Setup
 
 var express = require('express')
   , mongoose = require('mongoose')
   , User = require('./models/user')
-  , routes = require('./routes')
-  , user = require('./routes/user')
+  , welcome = require('./controllers/welcome')
+  , users = require('./controllers/users')
   , http = require('http')
   , path = require('path')
-  , engine = require('ejs-locals');
+  , engine = require('ejs-locals')
+  , app = express();
 
-var app = express();
+// Server Setup
 
-// use ejs-locals for all ejs templates:
 app.engine('ejs', engine);
-
-// all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -27,21 +25,25 @@ app.use(express.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// Database connection
+// Database Connection
+
 if ('development' == app.get('env')) {
   mongoose.connect('mongodb://localhost/bubblepop');
 } else {
   // insert db connection for production
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/users/create', user.create);
+// Routing
+
+app.get('/', welcome.index);
+app.get('/users', users.list);
+app.get('/users/create', users.create);
+
+// Start Server w/ DB Connection
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
