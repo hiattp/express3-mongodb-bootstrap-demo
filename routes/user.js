@@ -1,8 +1,23 @@
-
+var mongoose = require('mongoose')
+  , User = mongoose.model('User');
+  
 /*
  * GET users listing.
  */
 
 exports.list = function(req, res){
-  res.send("respond with a resource");
+  User.find(function(err,users){
+    if(err) next(err);
+    res.render('index',{
+      users:users
+    });
+  });
 };
+
+exports.create = function(req, res){
+  var newUser = new User({username:"tester"});
+  newUser.save(function(err, user){
+    if(err) next(err);
+    res.render('new');
+  });
+}
