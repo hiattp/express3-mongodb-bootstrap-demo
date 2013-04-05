@@ -40,6 +40,8 @@ if ('development' == app.get('env')) {
 // Routing
 
 app.get('/', welcome.index);
+// app.post('/login', passport.authenticate('local'), users.loginSuccess);
+app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
 app.get('/users', users.list);
 app.get('/users/create', users.create);
 
