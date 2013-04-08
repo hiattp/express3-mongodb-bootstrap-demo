@@ -1,16 +1,19 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User');
+  // is the above even necessary?
+  // , passport = require('passport')
+  // , LocalStrategy = require('passport-local').Strategy;
 
 
-// Handle successful login
-exports.loginSuccess = function(req, res) {
-  // `req.user` contains the authenticated user.
-  res.redirect('/users/' + req.user.username);  
-  // consider the following instead:
-  // app.post('/login',
-  //   passport.authenticate('local', { successRedirect: '/',
-  //                                    failureRedirect: '/login' }));
+// Get login page
+exports.login = function(req, res){
+  res.render('login', { user: req.user, message: req.flash('error') });
 });
+
+// Account page
+exports.account = function(req,res){
+  res.render('account', {user: req.user});
+}
 
 // List all users
 exports.list = function(req, res){

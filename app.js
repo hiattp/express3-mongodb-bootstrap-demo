@@ -2,12 +2,15 @@
 
 var express = require('express')
   , mongoose = require('mongoose')
-  , User = require('./models/user')
+  , UserModel = require('./models/user')
+  , User = mongoose.model('User')
   , welcome = require('./controllers/welcome')
   , users = require('./controllers/users')
   , http = require('http')
   , path = require('path')
   , engine = require('ejs-locals')
+  , passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy
   , app = express();
 
 // Server Setup
@@ -22,6 +25,8 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,11 +42,44 @@ if ('development' == app.get('env')) {
   // insert db connection for production
 }
 
+// Authentication
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+  }
+));
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
+}
+
 // Routing
 
 app.get('/', welcome.index);
-// app.post('/login', passport.authenticate('local'), users.loginSuccess);
-app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
+app.get('/login', users.login);
+app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
+app.get('/account', users.account);
 app.get('/users', users.list);
 app.get('/users/create', users.create);
 
