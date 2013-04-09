@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
 // Get login page
 exports.login = function(req, res){
   res.render('login', { user: req.user, message: req.flash('error') });
-});
+};
 
 // Account page
 exports.account = function(req,res){
@@ -16,9 +16,9 @@ exports.account = function(req,res){
 }
 
 // List all users
-exports.list = function(req, res){
+exports.list = function(req, res, next){
   User.find(function(err,users){
-    if(err) next(err);
+    if(err) return next(err);
     res.render('all_users',{
       users:users
     });
@@ -26,10 +26,10 @@ exports.list = function(req, res){
 };
 
 // Create user
-exports.create = function(req, res){
-  var newUser = new User({username:"tester"});
+exports.create = function(req, res, next){
+  var newUser = new User(req.body);
   newUser.save(function(err, user){
-    if(err) next(err);
-    res.render('new');
+    if(err) return next(err);
+    res.redirect('/users');
   });
 }

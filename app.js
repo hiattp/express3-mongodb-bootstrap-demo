@@ -9,6 +9,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , engine = require('ejs-locals')
+  , flash = require('connect-flash')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , app = express();
@@ -25,6 +26,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
@@ -77,11 +79,11 @@ function ensureAuthenticated(req, res, next) {
 // Routing
 
 app.get('/', welcome.index);
+app.post('/users', users.create);
 app.get('/login', users.login);
 app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
 app.get('/account', users.account);
 app.get('/users', users.list);
-app.get('/users/create', users.create);
 
 // Start Server w/ DB Connection
 

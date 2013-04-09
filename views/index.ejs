@@ -1,2 +1,16 @@
 <% layout('layout') -%>
-<p>This is the body</p>
+<p>Welcome to the home page! <a href="/login">Login</a> or create an account:</p>
+
+<form action="/users" method="post">
+    <div>
+        <label>Username:</label>
+        <input type="text" name="username"/>
+    </div>
+    <div>
+        <label>Password:</label>
+        <input type="password" name="password"/>
+    </div>
+    <div>
+        <input type="submit" value="Register"/>
+    </div>
+</form>
