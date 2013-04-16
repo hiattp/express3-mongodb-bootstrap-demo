@@ -59,14 +59,13 @@ passport.deserializeUser(function(id, done) {
 passport.use(new LocalStrategy(
   function(username, password, done) {
     User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+      if (err) return done(err);
+      if (!user) return done(null, false, { message: 'Incorrect username.' });
+      user.validPassword(password, function(err, isMatch){
+        if(err) return done(err);
+        if(isMatch) return done(null, user);
+        else done(null, false, { message: 'Incorrect password.' });
+      });
     });
   }
 ));
@@ -83,6 +82,7 @@ app.post('/users', users.create);
 app.get('/login', users.login);
 app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
 app.get('/account', users.account);
+app.get('/logout', users.logout);
 app.get('/users', users.list);
 
 // Start Server w/ DB Connection

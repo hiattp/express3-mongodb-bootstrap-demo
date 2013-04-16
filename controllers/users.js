@@ -8,7 +8,12 @@ var mongoose = require('mongoose')
 // Get login page
 exports.login = function(req, res){
   res.render('login', { user: req.user, message: req.flash('error') });
-};
+}
+
+exports.logout = function(req, res){
+  req.logout();
+  res.redirect('/');
+}
 
 // Account page
 exports.account = function(req,res){
@@ -23,7 +28,7 @@ exports.list = function(req, res, next){
       users:users
     });
   });
-};
+}
 
 // Create user
 exports.create = function(req, res, next){
