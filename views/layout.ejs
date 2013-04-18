@@ -1,11 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Project Bubble Pop</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Bubble Pop</title>
+    <link rel='stylesheet' href='/css/bootstrap.min.css' />
+    <link rel='stylesheet' href='/css/bootstrap-responsive.min.css' />
+    <link rel='stylesheet' href='/css/style.css' />
+    <script src="/js/jquery-1.9.1.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/main.js"></script>
   </head>
   <body>
-    <%= message %>
-    <%- body -%>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <% if(typeof message != "undefined" && message.error != "undefined"){ %>
+        <%= message %>
+        <% } %>
+        <%- body -%>
+      </div>
+    </div>
   </body>
 </html>
