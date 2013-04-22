@@ -7,7 +7,11 @@ var mongoose = require('mongoose')
 
 // Get login page
 exports.login = function(req, res){
-  res.render('login', { user: req.user, message: req.flash('error') });
+  res.render('login', { message: req.flash('error') });
+}
+
+exports.register = function(req, res){
+  res.render('register', { message: req.flash('error') });
 }
 
 exports.logout = function(req, res){
@@ -17,7 +21,7 @@ exports.logout = function(req, res){
 
 // Account page
 exports.account = function(req,res){
-  res.render('account', {user: req.user});
+  res.render('account');
 }
 
 // List all users

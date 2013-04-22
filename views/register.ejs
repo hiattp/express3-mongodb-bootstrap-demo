@@ -1,7 +1,5 @@
 <% layout('layout') -%>
-<p>Welcome! <a href="/register">Create an account</a> or login below:</p>
-
-<form action="/login" method="post">
+<form action="/users" method="post">
     <div>
         <label>Username:</label>
         <input type="text" name="username"/>
@@ -11,6 +9,10 @@
         <input type="password" name="password"/>
     </div>
     <div>
-      <button class="btn">Log In</button>
+        <label>Retype Password:</label>
+        <input type="password" name="password"/>
+    </div>
+    <div>
+        <button class="btn">Register</button>
     </div>
 </form>

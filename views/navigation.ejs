@@ -1,0 +1,13 @@
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <a class="brand" href="/">BubblePop</a>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+      <% if(typeof user == "undefined"){ %>
+        <li><a href="/register">Register</a></li>  
+      <% } else { %>
+        <li><a href="/logout">Logout</a></li>  
+      <% } %>
+    </ul>
+  </div>
+</div>

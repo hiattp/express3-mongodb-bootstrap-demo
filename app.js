@@ -29,6 +29,10 @@ app.use(express.session());
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req, res, next){
+  app.locals.user = req.user;
+  next();
+});
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -72,6 +76,7 @@ passport.use(new LocalStrategy(
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
+  req.flash('error', 'Please sign in to continue.')
   res.redirect('/login');
 }
 
@@ -80,8 +85,9 @@ function ensureAuthenticated(req, res, next) {
 app.get('/', welcome.index);
 app.post('/users', users.create);
 app.get('/login', users.login);
+app.get('/register', users.register);
 app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
-app.get('/account', users.account);
+app.get('/account', ensureAuthenticated, users.account);
 app.get('/logout', users.logout);
 app.get('/users', users.list);
 
