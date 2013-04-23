@@ -12,6 +12,7 @@ var express = require('express')
   , flash = require('connect-flash')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
+  , expressValidator = require('express-validator')
   , app = express();
 
 // Server Setup
@@ -23,6 +24,7 @@ app.set('view engine', 'ejs');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
+app.use(expressValidator);
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());

@@ -13,6 +13,7 @@
     "passport": "~0.1.16",
     "bcrypt": "~0.7.5",
     "passport-local": "~0.1.6",
-    "connect-flash": "~0.1.0"
+    "connect-flash": "~0.1.0",
+    "express-validator": "~0.3.2"
   }
 }
