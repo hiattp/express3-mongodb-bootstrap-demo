@@ -15,7 +15,7 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span12">
-          <% if(typeof message != "undefined" && message != "undefined" && message.length > 0){ %>
+          <% if(errorMessages.length > 0){ %>
             <% include alert.ejs %>
           <% } %>
           <%- body -%>

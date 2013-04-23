@@ -7,13 +7,15 @@ var mongoose = require('mongoose')
 
 // Get login page
 exports.login = function(req, res){
-  res.render('login', { message: req.flash('error') });
+  res.render('login');
 }
 
+// Get registration page
 exports.register = function(req, res){
-  res.render('register', { message: req.flash('error') });
+  res.render('register');
 }
 
+// Log user out and redirect to home page
 exports.logout = function(req, res){
   req.logout();
   res.redirect('/');
@@ -36,9 +38,16 @@ exports.list = function(req, res, next){
 
 // Create user
 exports.create = function(req, res, next){
+  if(req.body.password != req.body.password_confirmation){
+    req.flash('error', 'Password and password confirmation did not match.');
+    return res.redirect('/register');
+  }
   var newUser = new User(req.body);
   newUser.save(function(err, user){
     if(err) return next(err);
-    res.redirect('/users');
+    req.login(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect('/users');
+    });
   });
 }

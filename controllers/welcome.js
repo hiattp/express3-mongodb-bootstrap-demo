@@ -1,5 +1,6 @@
 // Get homepage
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+  if(typeof req.user == "undefined") return res.render('index');
+  res.render('dashboard');
 };

@@ -30,7 +30,8 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function(req, res, next){
-  app.locals.user = req.user;
+  app.locals.user = req.user; // make user available in all views
+  app.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
   next();
 });
 app.use(app.router);
@@ -74,22 +75,27 @@ passport.use(new LocalStrategy(
   }
 ));
 
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  req.flash('error', 'Please sign in to continue.')
+function ensureAuthenticated(req, res, next){
+  if (req.isAuthenticated()) return next();
+  req.flash('error', 'Please sign in to continue.');
   res.redirect('/login');
+}
+
+function redirectAuthenticated(req, res, next){
+  if (req.isAuthenticated()) return res.redirect('/');
+  next();
 }
 
 // Routing
 
 app.get('/', welcome.index);
 app.post('/users', users.create);
-app.get('/login', users.login);
-app.get('/register', users.register);
+app.get('/login', redirectAuthenticated, users.login);
+app.get('/register', redirectAuthenticated, users.register);
 app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
 app.get('/account', ensureAuthenticated, users.account);
 app.get('/logout', users.logout);
-app.get('/users', users.list);
+app.get('/users', users.list); // just for illustrative purposes
 
 // Start Server w/ DB Connection
 
