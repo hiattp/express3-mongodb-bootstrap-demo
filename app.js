@@ -29,11 +29,17 @@ app.use(express.session());
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Helpers
+
 app.use(function(req, res, next){
   app.locals.user = req.user; // make user available in all views
   app.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
   next();
 });
+
+// Routing Initializer
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

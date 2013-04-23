@@ -44,6 +44,7 @@ exports.create = function(req, res, next){
   }
   var newUser = new User(req.body);
   newUser.save(function(err, user){
+    console.log(err);
     if(err) return next(err);
     req.login(user, function(err) {
       if (err) { return next(err); }
