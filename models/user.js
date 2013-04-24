@@ -9,7 +9,9 @@ var UserSchema = new Schema({
   firstName : { type: String, required: true, index: { unique: false } },
   lastName : { type: String, required: true, index: { unique: false } },
   email : { type: String, required: true, index: { unique: true } },
-  password : { type: String, required: true }
+  password : { type: String, required: true },
+  resetPasswordToken : { type: String, required: false },
+  resetPasswordTokenCreatedAt : { type: Date },
 });
 
 // note this only happens on 'save', so be sure to use save (not just update) if updating password
@@ -38,5 +40,20 @@ UserSchema.methods.validPassword = function(candidatePassword, cb) {
     cb(null, isMatch);
   });
 };
+
+UserSchema.methods.generatePerishableToken = function(cb){
+  var user = this;
+  var timepiece = Date.now().toString(36);
+  var preHash = timepiece + user.email;
+  // generate a salt
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    if (err) return cb(err);
+    // hash the token along with our new salt
+    bcrypt.hash(preHash, salt, function(err, hash) {
+      if (err) cb(err);
+      else cb(null,hash);
+    });
+  });
+}
 
 module.exports = mongoose.model('User', UserSchema);

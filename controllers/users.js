@@ -7,6 +7,62 @@ exports.login = function(req, res){
   res.render('users/login', { postAuthDestination : req.query.postAuthDestination || "" });
 }
 
+// Get password reset request
+exports.reset_password = function(req, res){
+  res.render('users/reset_password');
+}
+
+// Process password reset request
+exports.generate_password_reset = function(req, res, next){
+  // Validations
+  req.assert('email', 'You must provide an email address.').notEmpty();
+  req.assert('email', 'Your email address must be valid.').isEmail();
+  var validationErrors = req.validationErrors() || [];
+  if (validationErrors.length > 0){
+    validationErrors.forEach(function(e){
+      req.flash('error', e.msg);
+    });
+    return res.redirect("/reset_password");
+  }
+  // Passed validations
+  User.findOne({email:req.body.email}, function(err, user){
+    if(err) return next(err);
+    if(!user){
+      // Mimic real behavior if someone is attempting to guess passwords
+      req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
+      return res.redirect('/');
+    }
+    user.generatePerishableToken(function(err,token){
+      user.update({
+        resetPasswordToken : token,
+        resetPasswordTokenCreatedAt : Date.now()
+      }, function(err){
+        if(err) return next(err);
+        // Send email with token
+        req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
+        res.redirect('/');
+      });
+    });
+  });
+}
+
+// Verify passport reset and update password
+exports.process_password_reset = function(req, res, next){
+  User.findOne({username:req.body.username}, function(err, user){
+    if(err) return next(err);
+    if(!user){
+      req.flash('error', "Password reset token invalid.");
+      return res.redirect("/");
+    }
+    if(req.body.token === user.resetPasswordToken && Date.now() < user.resetPasswordTokenCreatedAt + 5.hours ){
+      // reset password
+    } else {
+      req.flash('error', "Password reset token has expired.");
+      return res.redirect("/");
+    }
+  });
+}
+
 // Get dashboard
 exports.dashboard = function(req, res){
   res.render('users/dashboard');
