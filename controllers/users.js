@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 
 // Get login page
 exports.login = function(req, res){
-  res.render('users/login');
+  res.render('users/login', { postAuthDestination : req.query.postAuthDestination || "" });
 }
 
 // Get dashboard
@@ -18,11 +18,11 @@ exports.authenticate = function(req, res, next) {
     if (err) { return next(err); }
     if (!user) { 
       req.flash('error', info.message);
-      return res.redirect('/login');
+      return res.redirect(req.body.postAuthDestination ? '/login?postAuthDestination='+req.body.postAuthDestination : '/login');
     }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
-      return res.redirect('/account');
+      return res.redirect(req.body.postAuthDestination ? req.body.postAuthDestination : '/dashboard');
     });
   })(req, res, next);
 }

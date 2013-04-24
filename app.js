@@ -89,7 +89,8 @@ passport.use(new LocalStrategy(
 function ensureAuthenticated(req, res, next){
   if (req.isAuthenticated()) return next();
   req.flash('error', 'Please sign in to continue.');
-  res.redirect('/login');
+  var postAuthDestination = req.url;
+  res.redirect('/login?postAuthDestination='+postAuthDestination);
 }
 
 function redirectAuthenticated(req, res, next){
