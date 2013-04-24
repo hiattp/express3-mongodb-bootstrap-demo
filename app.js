@@ -101,14 +101,16 @@ function redirectAuthenticated(req, res, next){
 // Routing
 
 app.get('/', welcome.index);
-app.post('/users', users.create);
 app.get('/login', redirectAuthenticated, users.login);
 app.post('/login', users.authenticate);
 app.get('/register', redirectAuthenticated, users.register);
+app.post('/register', redirectAuthenticated, users.userValidations, users.create);
 app.get('/account', ensureAuthenticated, users.account);
+app.post('/account', ensureAuthenticated, users.userValidations, users.update);
 app.get('/dashboard', ensureAuthenticated, users.dashboard);
-app.get('/logout', users.logout);
-app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
+app.get('/logout', ensureAuthenticated, users.logout);
+// for illustrative purposes only
+app.get('/users', ensureAuthenticated, users.list);
 
 // Start Server w/ DB Connection
 

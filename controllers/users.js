@@ -53,32 +53,19 @@ exports.list = function(req, res, next){
   });
 }
 
+// Update user
+exports.update = function(req, res, next){
+  console.log(req.user.id);
+  console.log(new User(req.body));
+  res.redirect("/account");
+}
+
 // Create user
 exports.create = function(req, res, next){
-  
   var newUser = new User(req.body);
-
-  // Initial Validations
-
-  req.assert('email', 'You must provide an email address.').notEmpty();
-  req.assert('firstName', 'First Name is required.').notEmpty();
-  req.assert('lastName', 'Last Name is required.').notEmpty();
-  req.assert('email', 'Your email address must be valid.').isEmail();
-  req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
-  var validationErrors = req.validationErrors() || [];
-  if (req.body.password != req.body.password_confirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
-  if (validationErrors.length > 0){
-    validationErrors.forEach(function(e){
-      req.flash('error', e.msg);
-    });
-    return res.render('users/new', {user : newUser, errorMessages: req.flash('error')});
-  }
-  
-  // Initial Validations Passed
-  
   newUser.save(function(err, user){
     
-    // Uniqueness Validations
+    // Uniqueness and Save Validations
     
     if (err && err.code == 11000){
       var duplicatedAttribute = err.err.split("$")[1].split("_")[0];
@@ -95,4 +82,28 @@ exports.create = function(req, res, next){
       return res.redirect('/dashboard');
     });
   });
+}
+
+// Validations for user objects upon user update or create
+exports.userValidations = function(req, res, next){
+  var creatingUser = req.url == "/register";
+  var updatingUser = !creatingUser; // only to improve readability
+  req.assert('email', 'You must provide an email address.').notEmpty();
+  req.assert('firstName', 'First Name is required.').notEmpty();
+  req.assert('lastName', 'Last Name is required.').notEmpty();
+  req.assert('email', 'Your email address must be valid.').isEmail();
+  if(creatingUser || (updatingUser && req.body.password.length > 0)){
+    req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
+  }
+  var validationErrors = req.validationErrors() || [];
+  if (req.body.password != req.body.password_confirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
+  if (validationErrors.length > 0){
+    validationErrors.forEach(function(e){
+      req.flash('error', e.msg);
+    });
+    // Create handling
+    if (creatingUser) return res.render('users/new', {user : new User(req.body), errorMessages: req.flash('error')});
+    // Update handling
+    else return res.redirect("/account");
+  } else next();
 }
