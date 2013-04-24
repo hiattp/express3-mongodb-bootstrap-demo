@@ -133,9 +133,9 @@ exports.userValidations = function(req, res, next){
     validationErrors.forEach(function(e){
       req.flash('error', e.msg);
     });
-    // Create handling
+    // Create handling if errors present
     if (creatingUser) return res.render('users/new', {user : new User(req.body), errorMessages: req.flash('error')});
-    // Update handling
+    // Update handling if errors present
     else return res.redirect("/account");
   } else next();
 }
