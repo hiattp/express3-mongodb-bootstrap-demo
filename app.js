@@ -35,8 +35,10 @@ app.use(passport.session());
 // Helpers
 
 app.use(function(req, res, next){
+  app.locals.userIsAuthenticated = req.isAuthenticated(); // check for user authentication
   app.locals.user = req.user; // make user available in all views
   app.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
+  app.locals.successMessages = req.flash('success'); // make success messages available in all views
   next();
 });
 
@@ -99,11 +101,11 @@ function redirectAuthenticated(req, res, next){
 app.get('/', welcome.index);
 app.post('/users', users.create);
 app.get('/login', redirectAuthenticated, users.login);
+app.post('/login', users.authenticate);
 app.get('/register', redirectAuthenticated, users.register);
-app.post('/login', passport.authenticate('local', { successRedirect: '/account', failureRedirect: '/login', failureFlash: true }));
 app.get('/account', ensureAuthenticated, users.account);
 app.get('/logout', users.logout);
-app.get('/users', users.list); // just for illustrative purposes
+app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
 
 // Start Server w/ DB Connection
 

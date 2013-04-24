@@ -3,10 +3,10 @@
     <a class="brand" href="/">BubblePop</a>
     <ul class="nav">
       <li><a href="/">Home</a></li>
-      <% if(typeof user == "undefined"){ %>
-        <li><a href="/register">Register</a></li>  
+      <% if(userIsAuthenticated){ %>
+        <li><a href="/logout">Logout</a></li>
       <% } else { %>
-        <li><a href="/logout">Logout</a></li>  
+        <li><a href="/register">Register</a></li>  
       <% } %>
     </ul>
   </div>

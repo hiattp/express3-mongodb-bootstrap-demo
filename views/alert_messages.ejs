@@ -1,0 +1,13 @@
+<% errorMessages.forEach(function(e){ %>
+  <div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <%= e %>
+  </div>
+<% });%>
+
+<% successMessages.forEach(function(e){ %>
+  <div class="alert alert-success">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <%= e %>
+  </div>
+<% });%>

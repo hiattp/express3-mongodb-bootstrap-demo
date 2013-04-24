@@ -2,19 +2,19 @@
 <form action="/users" method="post">
   <div>
       <label>First Name:</label>
-      <input type="text" name="firstName"/>
+      <input type="text" name="firstName" value="<%= user.firstName || "" %>"/>
   </div>
   <div>
       <label>Last Name:</label>
-      <input type="text" name="lastName"/>
+      <input type="text" name="lastName" value="<%= user.lastName || "" %>"/>
   </div>
   <div>
       <label>Email:</label>
-      <input type="email" name="email"/>
+      <input type="email" name="email" value="<%= user.email || "" %>"/>
   </div>
   <div>
       <label>Username:</label>
-      <input type="text" name="username"/>
+      <input type="text" name="username" value="<%= user.username || "" %>"/>
   </div>
   <div>
       <label>Password:</label>
