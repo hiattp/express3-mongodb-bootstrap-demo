@@ -43,13 +43,19 @@ app.use(function(req, res, next){
   next();
 });
 
-// Routing Initializer
+// Routing Initializers
 
-app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(app.router);
+
+// Error Handling
 
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
+} else {
+  app.use(function(err, req, res, next) {
+    res.render('errors/500', { status: 500 });
+  });
 }
 
 // Database Connection
@@ -109,8 +115,8 @@ app.get('/account', ensureAuthenticated, users.account);
 app.post('/account', ensureAuthenticated, users.userValidations, users.update);
 app.get('/dashboard', ensureAuthenticated, users.dashboard);
 app.get('/logout', ensureAuthenticated, users.logout);
-// for illustrative purposes only
-app.get('/users', ensureAuthenticated, users.list);
+app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
+app.all('*', welcome.not_found);
 
 // Start Server w/ DB Connection
 
