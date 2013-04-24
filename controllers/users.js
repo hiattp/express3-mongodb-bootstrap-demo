@@ -4,7 +4,12 @@ var mongoose = require('mongoose')
 
 // Get login page
 exports.login = function(req, res){
-  res.render('login');
+  res.render('users/login');
+}
+
+// Get dashboard
+exports.dashboard = function(req, res){
+  res.render('users/dashboard');
 }
 
 // Authenticate user
@@ -24,7 +29,7 @@ exports.authenticate = function(req, res, next) {
 
 // Get registration page
 exports.register = function(req, res){
-  res.render('register', {user: new User({})});
+  res.render('users/new', {user: new User({})});
 }
 
 // Log user out and redirect to home page
@@ -35,14 +40,14 @@ exports.logout = function(req, res){
 
 // Account page
 exports.account = function(req,res){
-  res.render('account');
+  res.render('users/edit');
 }
 
 // List all users
 exports.list = function(req, res, next){
   User.find(function(err,users){
     if(err) return next(err);
-    res.render('all_users',{
+    res.render('users/index',{
       users:users
     });
   });
@@ -66,7 +71,7 @@ exports.create = function(req, res, next){
     validationErrors.forEach(function(e){
       req.flash('error', e.msg);
     });
-    return res.render('register', {user : newUser, errorMessages: req.flash('error')});
+    return res.render('users/new', {user : newUser, errorMessages: req.flash('error')});
   }
   
   // Initial Validations Passed
@@ -78,7 +83,7 @@ exports.create = function(req, res, next){
     if (err && err.code == 11000){
       var duplicatedAttribute = err.err.split("$")[1].split("_")[0];
       req.flash('error', "That " + duplicatedAttribute + " is already in use.");
-      return res.render('register', {user : newUser, errorMessages: req.flash('error')});
+      return res.render('users/new', {user : newUser, errorMessages: req.flash('error')});
     }
     if(err) return next(err);
     
@@ -87,7 +92,7 @@ exports.create = function(req, res, next){
     req.login(user, function(err) {
       if (err) { return next(err); }
       req.flash('success', "Account created successfully!");
-      return res.redirect('/account');
+      return res.redirect('/dashboard');
     });
   });
 }

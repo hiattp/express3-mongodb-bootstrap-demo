@@ -39,6 +39,7 @@ app.use(function(req, res, next){
   app.locals.user = req.user; // make user available in all views
   app.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
   app.locals.successMessages = req.flash('success'); // make success messages available in all views
+  app.locals.layoutPath = "../shared/layout";
   next();
 });
 
@@ -104,6 +105,7 @@ app.get('/login', redirectAuthenticated, users.login);
 app.post('/login', users.authenticate);
 app.get('/register', redirectAuthenticated, users.register);
 app.get('/account', ensureAuthenticated, users.account);
+app.get('/dashboard', ensureAuthenticated, users.dashboard);
 app.get('/logout', users.logout);
 app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
 
