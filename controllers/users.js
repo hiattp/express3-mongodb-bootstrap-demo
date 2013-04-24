@@ -55,9 +55,41 @@ exports.list = function(req, res, next){
 
 // Update user
 exports.update = function(req, res, next){
-  console.log(req.user.id);
-  console.log(new User(req.body));
-  res.redirect("/account");
+  var user = req.user;
+  // remove password attribute from form if not changing
+  if (!req.body.password) delete req.body.password;
+  // ensure valid current password
+  user.validPassword(req.body.currentPassword, function(err, isMatch){
+    if(err) return next(err);
+    if(isMatch) return updateUser();
+    else return failedPasswordConfirmation();
+  });
+  // Handle correct current password and changes to user
+  function updateUser(){
+    // use save instead of update to trigger 'save' event for password hashing
+    user.set(req.body);
+    user.save(function(err, user){
+      
+      // Uniqueness and Save Validations
+      
+      if (err && err.code == 11001){
+        var duplicatedAttribute = err.err.split("$")[1].split("_")[0];
+        req.flash('error', "That " + duplicatedAttribute + " is already in use.");
+        return res.redirect('/account');
+      }
+      if(err) return next(err);
+      
+      // User updated successfully, redirecting
+      
+      req.flash('success', "Account updated successfully.");
+      return res.redirect('/account');
+    });
+  }
+  // Handle incorrect current password entry
+  function failedPasswordConfirmation(){
+    req.flash('error', "Incorrect current password.");
+    return res.redirect("/account");
+  }
 }
 
 // Create user
@@ -65,7 +97,7 @@ exports.create = function(req, res, next){
   var newUser = new User(req.body);
   newUser.save(function(err, user){
     
-    // Uniqueness and Save Validations
+    // Uniqueness and save validations
     
     if (err && err.code == 11000){
       var duplicatedAttribute = err.err.split("$")[1].split("_")[0];
@@ -74,7 +106,7 @@ exports.create = function(req, res, next){
     }
     if(err) return next(err);
     
-    // New User Created Successfully, Logging In
+    // New user created successfully, logging In
     
     req.login(user, function(err) {
       if (err) { return next(err); }
@@ -92,11 +124,11 @@ exports.userValidations = function(req, res, next){
   req.assert('firstName', 'First Name is required.').notEmpty();
   req.assert('lastName', 'Last Name is required.').notEmpty();
   req.assert('email', 'Your email address must be valid.').isEmail();
-  if(creatingUser || (updatingUser && req.body.password.length > 0)){
+  if(creatingUser || (updatingUser && req.body.password)){
     req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
   }
   var validationErrors = req.validationErrors() || [];
-  if (req.body.password != req.body.password_confirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
+  if (req.body.password != req.body.passwordConfirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
   if (validationErrors.length > 0){
     validationErrors.forEach(function(e){
       req.flash('error', e.msg);
