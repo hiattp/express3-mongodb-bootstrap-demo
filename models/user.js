@@ -11,7 +11,7 @@ var UserSchema = new Schema({
   email : { type: String, required: true, index: { unique: true } },
   password : { type: String, required: true },
   resetPasswordToken : { type: String, required: false },
-  resetPasswordTokenCreatedAt : { type: Date },
+  resetPasswordTokenCreatedAt : { type: Date }
 });
 
 

@@ -26,6 +26,7 @@ Then visit [http://localhost:3000/](http://localhost:3000/).
 7. Simple MVC Design
 8. User CRUD & Password Recovery
 9. Basic Error Handling
+10. Form Validation
 
 ## License
 

@@ -124,6 +124,7 @@ exports.userValidations = function(req, res, next){
   req.assert('firstName', 'First Name is required.').notEmpty();
   req.assert('lastName', 'Last Name is required.').notEmpty();
   req.assert('email', 'Your email address must be valid.').isEmail();
+  req.assert('username', 'Username is required.').notEmpty();
   if(creatingUser || (updatingUser && req.body.password)){
     req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
   }
