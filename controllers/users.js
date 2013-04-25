@@ -7,88 +7,6 @@ exports.login = function(req, res){
   res.render('users/login', { postAuthDestination : req.query.postAuthDestination || "" });
 }
 
-// Get password reset request
-exports.reset_password = function(req, res){
-  res.render('users/reset_password');
-}
-
-// Process password reset request
-exports.generate_password_reset = function(req, res, next){
-  // Validations
-  req.assert('email', 'You must provide an email address.').notEmpty();
-  req.assert('email', 'Your email address must be valid.').isEmail();
-  var validationErrors = req.validationErrors() || [];
-  if (validationErrors.length > 0){
-    validationErrors.forEach(function(e){
-      req.flash('error', e.msg);
-    });
-    return res.redirect("/reset_password");
-  }
-  // Passed validations
-  User.findOne({email:req.body.email}, function(err, user){
-    if(err) return next(err);
-    if(!user){
-      // Mimic real behavior if someone is attempting to guess passwords
-      req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
-      return res.redirect('/');
-    }
-    user.generatePerishableToken(function(err,token){
-      user.update({
-        resetPasswordToken : token,
-        resetPasswordTokenCreatedAt : Date.now()
-      }, function(err){
-        if(err) return next(err);
-        // Send email with token and username
-        req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
-        res.redirect('/');
-      });
-    });
-  });
-}
-
-// Get password reset page
-exports.password_reset = function(req, res, next){
-  res.render("users/password_reset", {token : req.query.token, username : req.query.username});
-}
-
-// Verify passport reset and update password
-exports.process_password_reset = function(req, res, next){
-  User.findOne({username:req.body.username}, function(err, user){
-    if(err) return next(err);
-    if(!user){
-      req.flash('error', "Password reset token invalid.");
-      return res.redirect("/");
-    }
-    var tokenExpiration =  6 // time in hours
-    if(req.body.token === user.resetPasswordToken && Date.now() < (user.resetPasswordTokenCreatedAt + tokenExpiration * 3600000)){
-      // Token approved, on to new password validations
-      req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
-      var validationErrors = req.validationErrors() || [];
-      if (req.body.password != req.body.passwordConfirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
-      if (validationErrors.length > 0){
-        validationErrors.forEach(function(e){
-          req.flash('error', e.msg);
-        });
-        return res.render('users/password_reset', {errorMessages: req.flash('error'), token : req.body.token, username : req.body.username});
-      }
-      // Passed new password validations, updating password
-      user.set(req.body);
-      user.save(function(err, user){
-        if(err) return next(err);
-        // Password updated successfully, logging In
-        req.login(user, function(err) {
-          if (err) { return next(err); }
-          req.flash('success', "Password updated successfully, you are now logged in.");
-          return res.redirect('/dashboard');
-        });
-      });
-    } else {
-      req.flash('error', "Password reset token has expired.");
-      return res.redirect("/");
-    }
-  });
-}
-
 // Get dashboard
 exports.dashboard = function(req, res){
   res.render('users/dashboard');
@@ -220,4 +138,86 @@ exports.userValidations = function(req, res, next){
     // Update handling if errors present
     else return res.redirect("/account");
   } else next();
+}
+
+// Get password reset request
+exports.reset_password = function(req, res){
+  res.render('users/reset_password');
+}
+
+// Process password reset request
+exports.generate_password_reset = function(req, res, next){
+  // Validations
+  req.assert('email', 'You must provide an email address.').notEmpty();
+  req.assert('email', 'Your email address must be valid.').isEmail();
+  var validationErrors = req.validationErrors() || [];
+  if (validationErrors.length > 0){
+    validationErrors.forEach(function(e){
+      req.flash('error', e.msg);
+    });
+    return res.redirect("/reset_password");
+  }
+  // Passed validations
+  User.findOne({email:req.body.email}, function(err, user){
+    if(err) return next(err);
+    if(!user){
+      // Mimic real behavior if someone is attempting to guess passwords
+      req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
+      return res.redirect('/');
+    }
+    user.generatePerishableToken(function(err,token){
+      user.update({
+        resetPasswordToken : token,
+        resetPasswordTokenCreatedAt : Date.now()
+      }, function(err){
+        if(err) return next(err);
+        // Send email with token and username
+        req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
+        res.redirect('/');
+      });
+    });
+  });
+}
+
+// Get password reset page
+exports.password_reset = function(req, res, next){
+  res.render("users/password_reset", {token : req.query.token, username : req.query.username});
+}
+
+// Verify passport reset and update password
+exports.process_password_reset = function(req, res, next){
+  User.findOne({username:req.body.username}, function(err, user){
+    if(err) return next(err);
+    if(!user){
+      req.flash('error', "Password reset token invalid.");
+      return res.redirect("/");
+    }
+    var tokenExpiration =  6 // time in hours
+    if(req.body.token == user.resetPasswordToken && Date.now() < (user.resetPasswordTokenCreatedAt.getTime() + tokenExpiration * 3600000)){
+      // Token approved, on to new password validations
+      req.assert('password', 'Your password must be 6 to 20 characters long.').len(6, 20);
+      var validationErrors = req.validationErrors() || [];
+      if (req.body.password != req.body.passwordConfirmation) validationErrors.push({msg:"Password and password confirmation did not match."});
+      if (validationErrors.length > 0){
+        validationErrors.forEach(function(e){
+          req.flash('error', e.msg);
+        });
+        return res.render('users/password_reset', {errorMessages: req.flash('error'), token : req.body.token, username : req.body.username});
+      }
+      // Passed new password validations, updating password
+      user.set(req.body);
+      user.save(function(err, user){
+        if(err) return next(err);
+        // Password updated successfully, logging In
+        req.login(user, function(err) {
+          if (err) { return next(err); }
+          req.flash('success', "Password updated successfully, you are now logged in.");
+          return res.redirect('/dashboard');
+        });
+      });
+    } else {
+      req.flash('error', "Password reset token has expired.");
+      return res.redirect("/");
+    }
+  });
 }

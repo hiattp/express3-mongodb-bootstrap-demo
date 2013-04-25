@@ -14,7 +14,7 @@ var UserSchema = new Schema({
   resetPasswordTokenCreatedAt : { type: Date },
 });
 
-// note this only happens on 'save', so be sure to use save (not just update) if updating password
+
 UserSchema.pre('save', function(next) {
   var user = this;
 
