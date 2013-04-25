@@ -132,7 +132,7 @@ app.post('/register', redirectAuthenticated, users.userValidations, users.create
 app.get('/account', ensureAuthenticated, users.account);
 app.post('/account', ensureAuthenticated, users.userValidations, users.update);
 app.get('/dashboard', ensureAuthenticated, users.dashboard);
-app.get('/logout', ensureAuthenticated, users.logout);
+app.get('/logout', users.logout);
 app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
 app.all('*', welcome.not_found);
 
