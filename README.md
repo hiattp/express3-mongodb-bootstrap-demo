@@ -21,6 +21,7 @@ Then visit [http://localhost:3000/](http://localhost:3000/).
 5. [jQuery](http://jquery.com/)
 6. Simple MVC Design
 7. User CRUD & Password Recovery
+8. Basic Error Handling
 
 ## License
 
