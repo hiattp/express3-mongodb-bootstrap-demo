@@ -110,6 +110,8 @@ app.get('/', welcome.index);
 app.get('/login', redirectAuthenticated, users.login);
 app.get('/reset_password', redirectAuthenticated, users.reset_password);
 app.post('/reset_password', redirectAuthenticated, users.generate_password_reset);
+app.get('/password_reset', redirectAuthenticated, users.password_reset);
+app.post('/password_reset', redirectAuthenticated, users.process_password_reset);
 app.post('/login', redirectAuthenticated, users.authenticate);
 app.get('/register', redirectAuthenticated, users.register);
 app.post('/register', redirectAuthenticated, users.userValidations, users.create);
