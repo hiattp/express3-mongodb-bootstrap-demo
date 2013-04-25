@@ -17,7 +17,7 @@ var express = require('express')
   , config = require('./config')
   , app = express();
 
-// Set ENV Variables
+// Set ENV Variables (for development environments)
 
 if ('development' == app.get('env')) app.use(config.development);
 

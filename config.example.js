@@ -1,3 +1,5 @@
+// This file must be renamed to config.js to work.
+
 // Mimic env variables that will be included in your hosted environments.
 // This is just a sample.  This should be in your .gitignore file as it may contain sensitive information (password, secret keys, etc.).
 exports.development = function(req, res, next){
