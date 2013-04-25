@@ -166,14 +166,26 @@ exports.generate_password_reset = function(req, res, next){
       return res.redirect('/');
     }
     user.generatePerishableToken(function(err,token){
+      if(err) return next(err);
+      // Generated reset token, saving to user
       user.update({
         resetPasswordToken : token,
         resetPasswordTokenCreatedAt : Date.now()
       }, function(err){
         if(err) return next(err);
-        // Send email with token and username
-        req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
-        res.redirect('/');
+        // Saved token to user, sending email instructions
+        res.mailer.send('mailer/password_reset', {
+            to: user.email,
+            subject: 'Password Reset Request',
+            username: user.username,
+            token: token,
+            urlBase: "http://"+req.headers.host+"/password_reset"
+          }, function(err) {
+            if(err) return next(err);
+            // Sent email instructions, alerting user
+            req.flash('success', "You will receive a link to reset your password at "+req.body.email+".");
+            res.redirect('/');
+          });
       });
     });
   });

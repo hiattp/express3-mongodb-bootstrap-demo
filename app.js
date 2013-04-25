@@ -17,12 +17,6 @@ var express = require('express')
   , config = require('./config')
   , app = express();
 
-// Set ENV Variables (for development environments)
-
-if ('development' == app.get('env')) app.use(config.development);
-
-// Server Setup
-
 app.engine('ejs', engine);
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -49,6 +43,20 @@ app.use(function(req, res, next){
   next();
 });
 
+// Mailer Setup
+
+mailer.extend(app, {
+  from: 'no-reply@example.com',
+  host: 'smtp.mandrillapp.com', // hostname
+  // secureConnection: true, // use SSL
+  port: 587, // port for Mandrill
+  transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
+  auth: {
+    user: config[app.get('env')].MANDRILL_USERNAME,
+    pass: config[app.get('env')].MANDRILL_API_KEY
+  }
+});
+
 // Routing Initializers
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -71,20 +79,6 @@ if ('development' == app.get('env')) {
 } else {
   // insert db connection for production
 }
-
-// Mailer Setup
-
-mailer.extend(app, {
-  from: 'no-reply@example.com',
-  host: 'smtp.mandrillapp.com', // hostname
-  secureConnection: true, // use SSL
-  port: 587, // port for Mandrill
-  transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
-  auth: {
-    user: process.env.MANDRILL_USERNAME,
-    pass: process.env.MANDRILL_API_KEY
-  }
-});
 
 // Authentication
 
