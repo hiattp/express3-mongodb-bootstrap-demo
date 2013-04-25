@@ -1,6 +1,6 @@
-# Node.js (Express3 Mongoose Passport Bootstrap) Demo
+# Node.js (Express3 MongoDB Passport Bootstrap) Demo
 
-This is a simple boiler-plate MVC Node.js app with authentication and user account management to be used as a launch point for new apps.
+This is a simple boiler-plate MVC Node.js app with authentication and user account management to be used as a starting point for new apps.
 
 ## Install and Run
 
@@ -8,20 +8,22 @@ This is a simple boiler-plate MVC Node.js app with authentication and user accou
 
 ```sh
 npm install
+mv config.example.js config.js
 node app.js
 ```
 Then visit [http://localhost:3000/](http://localhost:3000/).
 
 ## Features
 
-1. [Express 3](http://expressjs.com/)
-2. [Mongoose](http://mongoosejs.com/)
-3. [Passport](http://mongoosejs.com/)
-4. [Twitter Bootstrap](http://twitter.github.io/bootstrap/index.html)
+1. Node.js Framework ([Express 3](http://expressjs.com/))
+2. MongoDB (using the [Mongoose](http://mongoosejs.com/) API)
+3. Authentication (using [Passport](http://mongoosejs.com/))
+4. Frontend Templating ([Twitter Bootstrap](http://twitter.github.io/bootstrap/index.html))
 5. [jQuery](http://jquery.com/)
-6. Simple MVC Design
-7. User CRUD & Password Recovery
-8. Basic Error Handling
+6. Mailer (using [Mandrill](http://mandrill.com/))
+7. Simple MVC Design
+8. User CRUD & Password Recovery
+9. Basic Error Handling
 
 ## License
 
