@@ -12,8 +12,10 @@ cd express3-mongodb-bootstrap-demo/
 npm install
 mv config.example.js config.js
 node app.js*
-if you receive an error about bcrypt_lib, then run, npm install bcrypt
 ```
+
+If you receive an error about bcrypt_lib, then run `npm install bcrypt`.
+
 Then visit [http://localhost:3000/](http://localhost:3000/).
 
 ## Features

@@ -75,7 +75,7 @@ if ('development' == app.get('env')) {
 // Database Connection
 
 if ('development' == app.get('env')) {
-  mongoose.connect('mongodb://localhost/bubblepop');
+  mongoose.connect('mongodb://localhost/nodedemo');
 } else {
   // insert db connection for production
 }
