@@ -11,7 +11,8 @@ git clone https://github.com/hiattp/express3-mongodb-bootstrap-demo.git
 cd express3-mongodb-bootstrap-demo/
 npm install
 mv config.example.js config.js
-node app.js
+node app.js*
+if you receive an error about bcrypt_lib, then run, npm install bcrypt
 ```
 Then visit [http://localhost:3000/](http://localhost:3000/).
 
