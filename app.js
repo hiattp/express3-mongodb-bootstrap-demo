@@ -35,10 +35,10 @@ app.use(passport.session());
 // Helpers
 
 app.use(function(req, res, next){
-  app.locals.userIsAuthenticated = req.isAuthenticated(); // check for user authentication
-  app.locals.user = req.user; // make user available in all views
-  app.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
-  app.locals.successMessages = req.flash('success'); // make success messages available in all views
+  res.locals.userIsAuthenticated = req.isAuthenticated(); // check for user authentication
+  res.locals.user = req.user; // make user available in all views
+  res.locals.errorMessages = req.flash('error'); // make error alert messages available in all views
+  res.locals.successMessages = req.flash('success'); // make success messages available in all views
   app.locals.layoutPath = "../shared/layout";
   next();
 });
