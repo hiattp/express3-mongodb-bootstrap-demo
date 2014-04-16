@@ -22,7 +22,7 @@ Then visit [http://localhost:3000/](http://localhost:3000/).
 
 1. Node.js Framework ([Express 3](http://expressjs.com/))
 2. MongoDB (using the [Mongoose](http://mongoosejs.com/) API)
-3. Authentication (using [Passport](http://mongoosejs.com/))
+3. Authentication (using [Passport](http://passportjs.org/))
 4. Frontend Templating ([Twitter Bootstrap](http://twitter.github.io/bootstrap/index.html))
 5. [jQuery](http://jquery.com/)
 6. Mailer (using [Mandrill](http://mandrill.com/))
